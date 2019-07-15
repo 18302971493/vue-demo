@@ -578,6 +578,7 @@
                 util.initRouter(this);
                 this.selectList = [];
                 this.selectCount = 0;
+                debugger
                 this.cancelEdit();
                 this.init();
               }else{

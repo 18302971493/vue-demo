@@ -2,12 +2,10 @@
 import ajax from '@/libs/axios';
 import gbs from '../libs/constant';
 let Base64 = require('js-base64').Base64;
-
-
 let base="/sparrow"
 
 // 文件上传接口
-export const uploadFile =base+gbs.SERVICE.sys+"/common/upload/imageUpload"
+export const uploadFile =base+gbs.SERVICE.sys+"/common/upload/uploadImage"
 // 验证码渲染图片接口
 export const drawCodeImage = base+gbs.SERVICE.sys+"/code/"
 
@@ -17,11 +15,11 @@ export function login(params){
   params.grant_type = gbs.oauth.grant_type;
   params.client_id = gbs.oauth.client_id;
   params.client_secret = gbs.oauth.client_secret;
+  params.login_type='pc'
   return ajax({
     method: 'post',
     url: "/auth/oauth/token",
-    params: params,
-    headers:{"Authorization":"Basic "+Base64.encode(gbs.oauth.client_id+":"+gbs.oauth.client_secret)}
+    params: params
   });
 }
 export function logout(params){

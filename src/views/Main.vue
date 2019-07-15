@@ -26,13 +26,13 @@
         </div>
         <div class="header-avator-con">
           <full-screen v-model="isFullScreen" @on-change="fullscreenChange"></full-screen>
-          <Dropdown @on-click="handleLanDropdown" class="options">
-            <Icon type="md-globe" :size="24" class="language"></Icon>
-            <DropdownMenu slot="list">
-              <DropdownItem name="zh-CN">中文</DropdownItem>
-              <DropdownItem name="en-US">English</DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+          <!--<Dropdown @on-click="handleLanDropdown" class="options">-->
+            <!--<Icon type="md-globe" :size="24" class="language"></Icon>-->
+            <!--<DropdownMenu slot="list">-->
+              <!--<DropdownItem name="zh-CN">中文</DropdownItem>-->
+              <!--<DropdownItem name="en-US">English</DropdownItem>-->
+            <!--</DropdownMenu>-->
+          <!--</Dropdown>-->
           <lock-screen></lock-screen>
           <message-tip v-model="mesCount"></message-tip>
           <div class="user-dropdown-menu-con">
@@ -202,6 +202,7 @@ export default {
             logout({token:this.getStore('accessToken')}).then(res=>{
               if(res.success){
                 this.loading=false;
+                this.$Message.success(res.message);
                 this.setStore('accessToken','')
                 this.setStore('userInfo','')
                 Cookies.remove('accessToken');

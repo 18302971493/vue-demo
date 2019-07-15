@@ -43,6 +43,13 @@ instance.interceptors.response.use(response => {
           router.push('/login');
         }
         break;
+      case 400:
+        if(data.message!=null){
+          Message.error(data.message)
+        }else{
+          Message.error("未知错误");
+        }
+        break;
       case 403:
         // 没有权限
         if (data.message !== null) {
@@ -53,7 +60,6 @@ instance.interceptors.response.use(response => {
         }
         break;
       case 500:
-        // 错误
         if (data.message !== null) {
           Message.error(data.message);
         } else {

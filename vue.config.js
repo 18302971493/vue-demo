@@ -2,10 +2,10 @@ module.exports = {
 
     devServer: {
         host: '127.0.0.1',
-        port: 8080,
+        port: 8888,
         proxy: {
             '/sparrow': {
-                target: 'http://127.0.0.1:8020',  // 请求本地，需要后台项目
+                target: 'http://localhost:8020',  // 请求本地，需要后台项目
                 ws: true,
                 changeOrigin: true,
                 pathRewrite: {

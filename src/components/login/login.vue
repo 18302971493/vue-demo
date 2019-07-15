@@ -80,7 +80,7 @@
             this.loading = true;
             login({username:this.form.userName,password:this.form.password,code:this.form.imageCode,captchaId:this.captchaId}).then(res=>{
                  if(typeof(res.code)!='undefined'){
-                    if(res.code==401){
+                    if(res.code!=200){
                        this.getVerifyCode();
                        this.loading = false;
                     }

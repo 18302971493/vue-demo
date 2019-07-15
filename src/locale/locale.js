@@ -11,6 +11,7 @@ export default {
         closeOthers: '关闭其他',
         systemManager:'系统管理',
         tip: '注：iview-admin只是为了示范如何实现多语言切换，所以只对当前页做了翻译。',
+        userManage:'用户管理'
     },
     'en-US': {
         home: 'home',
@@ -25,5 +26,6 @@ export default {
         closeAll: 'Close All',
         closeOthers: 'Close Others',
         tip: 'Note: iview-admin just to demonstrate how to achieve multi-language switching, so only the current page to do the translation.',
+        userManage:'UserManage'
     }
 };

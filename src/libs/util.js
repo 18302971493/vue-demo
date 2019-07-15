@@ -293,6 +293,7 @@ util.initRouterNode = function (routers, data) {
     for (var item of data) {
         let menu = Object.assign({}, item);
         menu.component = lazyLoading(menu.component);
+        // menu.title={i18n: menu.name }
         if (item.children && item.children.length > 0) {
             menu.children = [];
             util.initRouterNode(menu.children, item.children);

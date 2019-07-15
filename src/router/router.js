@@ -50,11 +50,9 @@ export const otherRouter = {
     component: Main,
     children: [
         { path: 'home', title: { i18n: 'home' }, name: 'home_index', component: () => import('@/components/home/home.vue') },
-        { path: 'ownspace', title: '个人中心', name: 'ownspace', component: () => import('@/components/own-space/own-space.vue') },
+        { path: 'ownspace', title:{ i18n: 'userCenter' }, name: 'ownspace', component: () => import('@/components/own-space/own-space.vue') },
         { path: 'change-pass', title: '修改密码', name: 'change_pass', component: () => import('@/components/change-pass/change-pass.vue') },
         { path: 'test', title: '富文本测试', name: 'test', component: () => import('@/views/sys/test/Test.vue') },
-        { path: 'message', title: '消息中心', name: 'message_index', component: () => import('@/components/message/message.vue') },
-        { path: 'message-send-detail', title: '消息发送详情', name: 'message_send_detail', component: () => import('@/views/sys/message/messageSendDetail.vue') }
     ]
 };
 export const appRouter = [];
