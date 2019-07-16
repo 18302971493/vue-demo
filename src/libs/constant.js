@@ -19,7 +19,7 @@ module.exports={
     SERVICE: {
         sys: '/sys',
         bus: '/bus',
-        base: '/base',
+        file: '/file',
         sparrow: '/sparrow'
     }
 }

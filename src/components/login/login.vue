@@ -27,6 +27,17 @@
                 </div>
               </Row>
             </FormItem>
+            <!--<FormItem>-->
+              <!--<div style="width: 100%;height: 36px;">-->
+                <!--<div id="vaptchaContainer"></div>-->
+                <!--<div v-if="loadingVaptcha" class="vaptcha-init-main">-->
+                  <!--<div class="vaptcha-loading">-->
+                    <!--<img src="@/assets/vaptcha-loading.gif" />-->
+                    <!--<span class="vaptcha-text">Vaptcha启动中...</span>-->
+                  <!--</div>-->
+                <!--</div>-->
+              <!--</div>-->
+            <!--</FormItem>-->
             <FormItem>
               <Button @click="handleSubmit" :loading="loading" type="primary" long>
                 <span v-if="!loading">登录</span>
@@ -42,12 +53,14 @@
 
 <script>
   import Cookies from 'js-cookie';
-  import {login,userInfo,drawCodeImage,init,} from '../../api/sys'
+  import {login,userInfo,drawCodeImage,vaptchaID} from '../../api/sys'
   import util from "@/libs/util.js";
+  var vaptchaObject;
   export default {
     data () {
       return {
         loading:false,
+        loadingVaptcha: true,
         captchaId:Math.random(),
         loadingCode:false,
         verifyCodeImg:'',
@@ -107,13 +120,32 @@
       initImage(){
         this.verifyCodeImg=drawCodeImage+this.captchaId
       },
+      initVaptcha() {
+        let that = this;
+        vaptcha({
+          //配置参数
+          vid: vaptchaID, // 验证单元id
+          type: "click", // 展现类型 点击式
+          container: "#vaptchaContainer"
+        }).then(function(vaptchaObj) {
+          vaptchaObject = vaptchaObj;
+          vaptchaObj.render(); // 加载验证按钮
+          that.loadingVaptcha = false;
+          vaptchaObj.listen("pass", function() {
+            // 验证成功
+            that.verified = true;
+            that.form.token = vaptchaObj.getToken();
+          });
+        });
+      },
       getVerifyCode(){
         this.captchaId=Math.random();
         this.initImage()
       },
     },
     mounted() {
-      this.initImage()
+      this.initImage();
+      //this.initVaptcha()
     }
   };
 </script>

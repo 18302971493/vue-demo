@@ -109,7 +109,7 @@ export default {
       return this.$store.state.app.currentPath; // 当前面包屑数组
     },
     avatarPath() {
-      return localStorage.avatorImgPath;
+      return this.$store.state.app.avatar;
     },
     cachePage() {
       return this.$store.state.app.cachePage;

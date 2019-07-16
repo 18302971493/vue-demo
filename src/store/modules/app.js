@@ -25,6 +25,7 @@ const app = {
                 name: 'home_index'
             }
         ],
+        avatar:localStorage.avatorImgPath,
         // 面包屑数组
         menuList: [],
         routers: [
@@ -120,7 +121,8 @@ const app = {
             localStorage.pageOpenedList = JSON.stringify(state.pageOpenedList);
         },
         setOpenedList(state) {
-            state.pageOpenedList = localStorage.pageOpenedList ? JSON.parse(localStorage.pageOpenedList) : [otherRouter.children[0]];
+            state.pageOpenedList = [otherRouter.children[0]];
+                //localStorage.pageOpenedList ? JSON.parse(localStorage.pageOpenedList) :
         },
         setCurrentPath(state, pathArr) {
             state.currentPath = pathArr;
@@ -129,6 +131,7 @@ const app = {
             state.currentPageName = name;
         },
         setAvatarPath(state, path) {
+            state.avatar=path;
             localStorage.avatorImgPath = path;
         },
         switchLang(state, lang) {
@@ -147,7 +150,7 @@ const app = {
                 localStorage.cachePage = JSON.stringify(state.cachePage);
             }
             state.pageOpenedList.push(tagObj);
-            localStorage.pageOpenedList = JSON.stringify(state.pageOpenedList);
+            //localStorage.pageOpenedList = JSON.stringify(state.pageOpenedList);
         }
     }
 };

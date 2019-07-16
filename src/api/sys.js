@@ -5,9 +5,11 @@ let Base64 = require('js-base64').Base64;
 let base="/sparrow"
 
 // 文件上传接口
-export const uploadFile =base+gbs.SERVICE.sys+"/common/upload/uploadImage"
+export const uploadFile =base+gbs.SERVICE.file+"/upload/file"
 // 验证码渲染图片接口
 export const drawCodeImage = base+gbs.SERVICE.sys+"/code/"
+
+export const vaptchaID = "5d2c3a17fc650e430c72be52"
 
 export const ws = "http://www.maqueezu.com/sparrow/webSocketServer.do"
 // 登陆
@@ -365,6 +367,12 @@ export function findDictByType(params){
     params: params
   });
 }
+export function selectGroupByType(){
+  return ajax({
+    method: 'get',
+    url:gbs.SERVICE.sys+'/dict/selectGroupByType'
+  });
+}
 export function enableDict(params){
   return ajax({
     method: 'post',
@@ -502,4 +510,46 @@ export function deleteZuul(ids){
     method: 'delete',
     url:gbs.SERVICE.sys+`/zuul/delAllByIds/${ids}`
   });
+}
+export const checkOssSet = (params) => {
+  return ajax({
+    method:'get',
+    url:gbs.SERVICE.sys+'/setting/oss/check',
+    params:params
+  })
+}
+export const getOssSet = (serviceName, params) => {
+  return ajax({
+    method:'get',
+    url:gbs.SERVICE.sys+`/setting/oss/${serviceName}`,
+    params:params
+  })
+}
+export const getVaptchaSet = (params) => {
+  return ajax({
+    method:'get',
+    url:gbs.SERVICE.sys+'/setting/vaptcha',
+    params:params
+  })
+}
+export const editVaptchaSet = (params) => {
+  return ajax({
+    method:'post',
+    url:gbs.SERVICE.sys+'/setting/vaptcha/set',
+    params:params
+  })
+}
+export const seeSecretSet = (settingName, params) => {
+  return ajax({
+    method:'get',
+    url:gbs.SERVICE.sys+`/setting/seeSecret/${settingName}`,
+    params:params
+  })
+}
+export const editOssSet = (params) => {
+  return ajax({
+    method:'post',
+    url:gbs.SERVICE.sys+'/setting/oss/set',
+    params:params
+  })
 }

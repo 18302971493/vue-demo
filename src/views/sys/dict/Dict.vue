@@ -100,6 +100,7 @@ import {
   findDictByType,
   editDict,
   deleteDict,
+  selectGroupByType,
   enableDict
 } from "@/api/sys";
 import circleLoading from "../../../components/my-components/circle-loading";
@@ -333,6 +334,7 @@ export default {
     init() {
       // 获取表单数据
       this.getDataList();
+      this.getDictType();
     },
     changeDict(){
       this.form.parentId=""
@@ -362,9 +364,16 @@ export default {
         if (res.success === true) {
           this.data = res.result.records;
           this.total = res.result.total;
-          this.dictList=res.result.dictList
+
         }
       });
+    },
+    getDictType(){
+      selectGroupByType().then(res=>{
+        if(res.success){
+           this.dictList=res.result
+        }
+      })
     },
     handleSearch() {
       this.searchForm.pageNo= 1;
@@ -496,8 +505,6 @@ export default {
   },
   mounted() {
     this.init();
-    let data=this.$route;
-    console.log(data)
   }
 };
 </script>

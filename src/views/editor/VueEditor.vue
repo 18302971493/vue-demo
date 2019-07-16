@@ -28,6 +28,9 @@
         path: {
           type: String,
           required: true
+        },
+        content:{
+            type: String
         }
       },
       methods: {
@@ -68,7 +71,7 @@
         this.editor.customConfig.uploadFileName = 'file';
         this.editor.customConfig.uploadImgServer=uploadFile
         this.editor.customConfig.uploadImgParams = {
-          path: this.path
+            subFolder: this.path
         }
         this.editor.customConfig.uploadImgHooks = {
           success: function (xhr, editor, result) {
@@ -87,9 +90,8 @@
             // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象
             Message.error("服务器超时")
           },
-
           customInsert: function (insertImg, result, editor) {
-            var url = result.data
+            var url = result.result
             insertImg(url)
           }
         }
@@ -97,7 +99,10 @@
           // info 是需要提示的内容
           Message.error(info)
         }
-        this.editor.create()
+        this.editor.create();
+          if(this.content!=null&&this.content!=''){
+              this.setHtml(this.content)
+          }
       }
   };
 </script>

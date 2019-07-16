@@ -250,7 +250,7 @@ export default {
       this.mobileEditForm.mobile = userInfo.mobile;
       this.initEmail = userInfo.email;
       this.emailEditForm.email = userInfo.email;
-      this.defaultList[0].url = userInfo.avatar;
+      this.defaultList[0].url = this.$store.state.app.avatar;
       if (userInfo.address !== null && userInfo.address !== "") {
         this.userForm.address = userInfo.address;
         this.userForm.addressArray = JSON.parse(userInfo.address);
@@ -280,10 +280,13 @@ export default {
     handleSuccess(res, file) {
       debugger
       if (res.success === true) {
-        file.url = res.result.filePath;
-        this.userForm.avatar = res.result.filePath;
-        this.defaultList[0].url = res.result.filePath;
-        this.$refs.upload.fileList.splice(0, 1);
+        file.url = res.result;
+        this.userForm.avatar = res.result;
+        this.defaultList[0].url = res.result;
+        var fileList=this.$refs.upload.fileList;
+        if(fileList.length>1){
+            this.$refs.upload.fileList.splice(0, 1);
+        }
       } else {
         this.$Message.error(res.message);
       }
@@ -343,7 +346,7 @@ export default {
       });
     },
     cancelEditUserInfo() {
-      this.$store.commit("removeTag", "ownspace_old");
+      this.$store.commit("removeTag", "ownspace");
       localStorage.pageOpenedList = JSON.stringify(
         this.$store.state.app.pageOpenedList
       );
@@ -377,8 +380,8 @@ export default {
         }
       });
     },
-    changeAddress() {
-      this.userForm.address = JSON.stringify(this.userForm.addressArray);
+    changeAddress(data) {
+      this.userForm.address = JSON.stringify(data);
     },
     cancelInputCodeBox() {
       this.editMobileVisible = false;

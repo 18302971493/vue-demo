@@ -41,7 +41,7 @@
                 </Select>
               </FormItem>
               <FormItem label="备注" >
-                <VueEditor path="/test/"  ref="editor"></VueEditor>
+                <VueEditor path="/test/" :content="this.path" ref="editor"></VueEditor>
               </FormItem>
             </Form>
             <div >
@@ -83,7 +83,7 @@
         selectDep: [],
         dataDep: [],
         searchKey: "",
-        path:"<img src=\"http://localhost:8020/sys/upload/test/1.jpg\" style=\"max-width:100%;\"><br></p>",
+        path:"<img src=\"http://tx.haiqq.com/uploads/allimg/160824/1126355296-0.jpg\" style=\"max-width:100%;\"><br></p>",
         searchForm: {
           username: "",
           officeId: "",

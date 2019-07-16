@@ -112,28 +112,7 @@
                     </RadioGroup>
                 </FormItem>
                 <Form-item label="头像" prop="avatar">
-                    <Poptip trigger="hover" title="图片预览" placement="right" width="350">
-                        <Input v-model="userForm.avatar" placeholder="可直接填入网络图片链接" clearable/>
-                        <div slot="content">
-                            <img :src="userForm.avatar" alt="无效的图片链接"
-                                 style="width: 100%;margin: 0 auto;display: block;">
-                            <a @click="viewPic()" style="margin-top:5px;text-align:right;display:block">查看原图</a>
-                        </div>
-                    </Poptip>
-                    <Upload :action="uploadFileUrl"
-                            :headers="accessToken"
-                            :on-success="handleSuccess"
-                            :on-error="handleError"
-                            :format="['jpg','jpeg','png','gif']"
-                            :max-size="5120"
-                            :on-format-error="handleFormatError"
-                            :on-exceeded-size="handleMaxSize"
-                            :before-upload="beforeUpload"
-                            :show-upload-list="false"
-                            ref="up"
-                            class="upload">
-                        <Button icon="ios-cloud-upload-outline">上传图片</Button>
-                    </Upload>
+                    <upload-pic-input @on-change="handleUpload" :picUrl="userForm.avatar" width="285px" ref="upload"></upload-pic-input>
                 </Form-item>
                 <Form-item label="所属部门" prop="officeTitle">
                     <Poptip trigger="click" placement="right" title="选择部门" width="250">
@@ -204,11 +183,13 @@
         findDictByType
     } from "../../../api/sys";
     import circleLoading from "../../../components/my-components/circle-loading";
+    import uploadPicInput from "@/components/own-space/upload-pic-input";
 
     export default {
         name: "user-manage",
         components: {
             circleLoading,
+            uploadPicInput
         },
         data() {
             const validatePassword = (rule, value, callback) => {
@@ -264,7 +245,7 @@
                 userForm: {
                     sex: 1,
                     type: 0,
-                    avatar: "http://tx.haiqq.com/uploads/allimg/160824/1126355296-0.jpg",
+                    avatar: "",
                     roles: [],
                     officeId: "",
                     officeTitle: "",
@@ -577,13 +558,13 @@
         },
         methods: {
             init() {
-                this.accessToken = {
-                    accessToken: this.getStore("accessToken")
-                };
                 this.initDepartmentData();
                 this.getUserList();
                 this.initDepartmentTreeData();
                 this.getDictSexData();
+            },
+            handleUpload(v) {
+                this.userForm.avatar = v;
             },
             initDepartmentData() {
                 initDepartment().then(res => {
@@ -765,7 +746,6 @@
             },
             getRoleList() {
                 getAlLRoleList().then(res => {
-                    console.log(res)
                     if (res.success === true) {
                         this.roleList = res.result;
                     }
@@ -836,13 +816,12 @@
                                 }
                             });
                         } else {
-                            // 编辑
-
                             this.submitLoading = true;
                             editUser(JSON.stringify(this.userForm)).then(res => {
                                 this.submitLoading = false;
                                 if (res.success === true) {
                                     this.$Message.success("操作成功");
+                                    this.$store.commit("setAvatarPath", this.userForm.avatar);
                                     this.getUserList();
                                     this.userModalVisible = false;
                                 }
@@ -854,43 +833,11 @@
             viewPic() {
                 this.viewImage = true;
             },
-            handleFormatError(file) {
-                this.$Notice.warning({
-                    title: "不支持的文件格式",
-                    desc:
-                        "所选文件‘ " +
-                        file.name +
-                        " ’格式不正确, 请选择 .jpg .jpeg .png .gif格式文件"
-                });
-            },
-            handleMaxSize(file) {
-                this.$Notice.warning({
-                    title: "文件大小过大",
-                    desc: "所选文件‘ " + file.name + " ’大小过大, 不得超过 5M."
-                });
-            },
-            beforeUpload() {
-                if (!this.$route.meta.permission.includes("upload")) {
-                    this.$Message.error("此处您没有上传权限");
-                    return false;
-                }
-                return true;
-            },
-            handleSuccess(res, file) {
-                if (res.success === true) {
-                    file.url = res.result.filePath;
-                    this.userForm.avatar = res.result.filePath;
-                } else {
-                    this.$Message.error(res.message);
-                }
-            },
-            handleError(error, file, fileList) {
-                this.$Message.error(error.toString());
-            },
+
             add() {
                 this.modalType = 0;
                 this.modalTitle = "添加用户";
-                //this.$refs.userForm.resetFields();
+                this.$refs.userForm.resetFields();
                 this.userModalVisible = true;
             },
             edit(v) {
@@ -898,6 +845,7 @@
                     this.$Message.error("不能编辑超级管理员");
                     return
                 }
+
                 this.modalType = 1;
                 this.modalTitle = "编辑用户";
                 this.$refs.userForm.resetFields();
