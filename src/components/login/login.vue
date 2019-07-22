@@ -5,9 +5,9 @@
 <template>
   <div class="login" @keydown.enter="handleSubmit">
     <div class="login-con">
-      <Card :bordered="false">
+      <Card>
         <p slot="title" style="text-align: center;font-size: 16px;">
-          <Icon type="log-in"></Icon>
+          <Icon type="ios-contact"></Icon>
           欢迎登录
         </p>
         <div class="form">
@@ -23,7 +23,7 @@
                 <Input v-model="form.imageCode" size="large" clearable placeholder="请输入验证码" :maxlength="10" class="input-verify" />
                 <div style="position:relative;margin-left: 5px;">
                   <Spin v-if="loadingCode" fix></Spin>
-                  <img :src="verifyCodeImg"  @click="getVerifyCode" alt="加载验证码失败" style="width:100px;cursor:pointer;display:block">
+                  <img :src="verifyCodeImg"  @click="getVerifyCode" alt="加载验证码失败" style="width:100%;cursor:pointer;display:block">
                 </div>
               </Row>
             </FormItem>
@@ -39,7 +39,7 @@
               <!--</div>-->
             <!--</FormItem>-->
             <FormItem>
-              <Button @click="handleSubmit" :loading="loading" type="primary" long>
+              <Button @click="handleSubmit" :loading="loading" type="primary" size="large" long>
                 <span v-if="!loading">登录</span>
                 <span v-else>登录中...</span>
               </Button>

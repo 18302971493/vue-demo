@@ -7,8 +7,8 @@
     <div class="sidebar-menu-con menu-bar" :style="{width: shrink?'60px':'220px', overflow: shrink ? 'visible' : 'auto'}">
       <shrinkable-menu :shrink="shrink" @on-change="handleSubmenuChange" :theme="menuTheme" :before-push="beforePush" :open-names="openedSubmenuArr" :menu-list="menuList">
         <div slot="top" class="logo-con">
-          <img v-show="!shrink" src="../../static/images/logo.jpg" key="max-logo" />
-          <img v-show="shrink" src="../../static/images/logo-min.jpg" key="min-logo" />
+          <img v-show="!shrink" src="../../static/images/1.png" key="max-logo" />
+          <img v-show="shrink" src="../../static/images/2.png" key="min-logo" />
         </div>
       </shrinkable-menu>
     </div>

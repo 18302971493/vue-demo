@@ -95,20 +95,79 @@
             <Spin fix v-if="loading"></Spin>
           </div>
         </TabPane>
+        <TabPane label="移动支付" name="appPay">
+          <div style="position:relative">
+            <Form
+                    ref="payForm"
+                    :model="payForm"
+                    :label-width="120"
+                    label-position="right"
+                    :rules="appPayValidate"
+            >
+              <FormItem label="支付方式：" prop="payType">
+                <Select v-model="payForm.payType" @on-change="changePay" placeholder="请选择" style="width: 200px">
+                  <Option value="aliPay">支付宝支付</Option>
+                  <Option value="wxPay">微信支付</Option>
+                  <Option value="wxPayProgram">微信小程序支付</Option>
+                </Select>
+              </FormItem>
+              <FormItem label="支付方式名称：">
+                <Input type="text" v-model="payForm.payTypeName"  style="width: 350px"/>
+              </FormItem>
+              <div v-if="payForm.payType=='wxPay'">
+                <FormItem label="商户号：" prop="mchId">
+                  <Input type="text" v-model="payForm.mchId"  style="width: 350px"/>
+                </FormItem>
+                <FormItem label="AppId：" prop="appId">
+                  <Input type="text" v-model="payForm.appId"  style="width: 350px"/>
+                </FormItem>
+                <FormItem label="密钥(api key)：" prop="secretKey">
+                  <Input type="text" v-model="payForm.secretKey"  style="width: 350px"/>
+                </FormItem>
+              </div>
+              <div v-if="payForm.payType=='aliPay'">
+                <FormItem label="合作伙伴id：" prop="partner">
+                  <Input type="text" v-model="payForm.partner"  style="width: 350px"/>
+                </FormItem>
+                <FormItem label="卖家支付宝帐户：" prop="account">
+                  <Input type="text" v-model="payForm.account"  style="width: 350px"/>
+                </FormItem>
+                <FormItem label="商户私钥：" prop="rsaPrivate">
+                  <Input type="text" v-model="payForm.rsaPrivate"  style="width: 350px"/>
+                </FormItem>
+                <FormItem label="商户公钥：" prop="rsaPublic">
+                  <Input type="text" v-model="payForm.rsaPublic"  style="width: 350px"/>
+                </FormItem>
+              </div>
+              <div v-if="payForm.payType=='wxPayProgram'">
+                <FormItem label="商户号：" prop="mchId">
+                  <Input type="text" v-model="payForm.mchId"  style="width: 350px"/>
+                </FormItem>
+                <FormItem label="AppId：" prop="appId">
+                  <Input type="text" v-model="payForm.appId"  style="width: 350px"/>
+                </FormItem>
+                <FormItem label="密钥(api key)：" prop="secretKey">
+                  <Input type="text" v-model="payForm.secretKey"  style="width: 350px"/>
+                </FormItem>
+              </div>
+              <FormItem label="备注：">
+                <Input type="textarea" v-model="payForm.remark"  style="width: 350px"/>
+              </FormItem>
+              <FormItem>
+                <Button type="primary" style="width: 100px;margin-right:5px" :loading="saveLoading" @click="saveEditPay">保存更改</Button>
+              </FormItem>
+            </Form>
+            <Spin fix v-if="loading"></Spin>
+          </div>
+        </TabPane>
       </Tabs>
     </Card>
   </div>
 </template>
 
 <script>
-  import {
-    seeSecretSet,
-    checkOssSet,
-    getOssSet,
-    editOssSet,
-    getVaptchaSet,
-    editVaptchaSet
-  } from "@/api/sys";
+  import {seeSecretSet, checkOssSet, getOssSet, editOssSet, getVaptchaSet, editVaptchaSet} from "@/api/sys";
+  import {findByPayType, addPayConfig, deletePayConfig} from "@/api/pay";
   export default {
     name: "setting-manage",
     data() {
@@ -122,6 +181,18 @@
           secretKey: "",
           endpoint: "",
           bucket: ""
+        },
+        payForm:{
+          payType:'aliPay',
+          payTypeName:'支付宝支付',
+          mchId:'',
+          appId:'',
+          secretKey:'',
+          remark:'',
+          partner:'',
+          account:'',
+          rsaPrivate:'',
+          rsaPublic:''
         },
         changedOssSK: false, // 是否修改oss的secrectKey
         errorMsg: "",
@@ -144,7 +215,16 @@
           vID: [{ required: true, message: "不能为空", trigger: "blur" }],
           secretKey: [{ required: true, message: "不能为空", trigger: "blur" }]
         },
-
+        appPayValidate:{
+          payType:[{required:true,message:'支付类型不能为空',trigger:'blur'}],
+          mchId:[{required:true,message:'商户号不能为空',trigger:'blur'}],
+          appId:[{required:true,message:'appId不能为空',trigger:'blur'}],
+          secretKey:[{required:true,message:'secretKey不能为空',trigger:'blur'}],
+          partner:[{required:true,message:'合作伙伴id不能为空',trigger:'blur'}],
+          account:[{required:true,message:'卖家账号不能为空',trigger:'blur'}],
+          rsaPrivate:[{required:true,message:'商户私钥不能为空',trigger:'blur'}],
+          rsaPublic:[{required:true,message:'商户公钥不能为空',trigger:'blur'}],
+        },
         endpointPH: "请输入空间访问域名",
         dictBucketRegions: []
       };
@@ -178,6 +258,26 @@
             this.changedOssSK = true;
           }
         });
+      },
+      changePay(v){
+        if(v=='wxPay'){
+           this.payForm.payTypeName='微信移动支付';
+        }else if(v=='aliPay'){
+          this.payForm.payTypeName='支付宝支付';
+        }else{
+          this.payForm.payTypeName='微信小程序支付';
+        }
+        findByPayType(this.payForm.payType).then(res=>{
+          if(res.success){
+            if(res.result!=null){
+              this.payForm=res.result
+            }else{
+              this.$refs.payForm.resetFields();
+              this.payForm.remark=''
+            }
+             this.payForm.payType=v
+          }
+        })
       },
       changeOss(v) {
         if (v == "ALI_OSS") {
@@ -241,6 +341,22 @@
           }
         });
       },
+      saveEditPay(){
+        this.saveLoading = true;
+        this.$refs.payForm.validate(valid=>{
+           if(valid){
+             addPayConfig(JSON.stringify(this.payForm)).then(res=>{
+               if(res.success){
+                 this.saveLoading = false;
+                 this.$Message.success("保存成功");
+               }else{
+                 this.saveLoading = false;
+                 this.$Message.error(res.message);
+               }
+             })
+           }
+        })
+      },
       saveEditOss() {
         if (this.oss.serviceName == "LOCAL_OSS") {
           if (!this.oss.http) {
@@ -287,34 +403,6 @@
             }
           });
         }
-      },
-      saveEditSms() {
-        this.$refs.smsForm.validate(valid => {
-          if (valid) {
-            this.saveLoading = true;
-            this.sms.changed = this.changedSmsSK;
-            editSmsSet(this.sms).then(res => {
-              this.saveLoading = false;
-              if (res.success) {
-                this.$Message.success("保存成功");
-              }
-            });
-          }
-        });
-      },
-      saveEditEmail() {
-        this.$refs.emailForm.validate(valid => {
-          if (valid) {
-            this.saveLoading = true;
-            this.email.changed = this.changedEmailPass;
-            editEmailSet(this.email).then(res => {
-              this.saveLoading = false;
-              if (res.success) {
-                this.$Message.success("保存成功");
-              }
-            });
-          }
-        });
       },
       saveEditVaptcha() {
         this.$refs.vaptchaForm.validate(valid => {

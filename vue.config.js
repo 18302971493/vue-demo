@@ -5,12 +5,12 @@ module.exports = {
         port: 8888,
         proxy: {
             '/sparrow': {
-                target: 'http://localhost:8020',  // 请求本地，需要后台项目
+                target: 'http://192.168.157.138:8720',  // 请求本地，需要后台项目
                 ws: true,
                 changeOrigin: true,
-                pathRewrite: {
-                    '^/sparrow': '/'
-                }
+                // pathRewrite: {
+                //     '^/sparrow': '/'
+                // }
             },
             '/foo': {
                 target: '<other_url>'
