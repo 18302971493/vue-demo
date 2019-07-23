@@ -20,7 +20,7 @@ export function login(params){
   params.login_type='pc'
   return ajax({
     method: 'post',
-    url: "/auth/oauth/token",
+    url: "/auth/form/login",
     params: params
   });
 }

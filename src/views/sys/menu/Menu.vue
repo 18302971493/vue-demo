@@ -201,7 +201,7 @@
             <!--<Option v-for="(item, i) in dictPermissions" :key="i" :value="item.value">{{item.label}}</Option>-->
           <!--</Select>-->
           <Tooltip trigger="focus" placement="right" content="一级菜单不需要填写">
-            <Input v-model="menuForm.permission" placeholder="必须唯一" style="width: 383px;"/>
+            <Input v-model="menuFormAdd.permission" placeholder="必须唯一" style="width: 383px;"/>
           </Tooltip>
         </FormItem>
         <div v-if="menuFormAdd.type===0">
@@ -300,7 +300,7 @@
           url: ""
         },
         menuFormAdd: {
-          buttonType: ""
+          buttonType: "",
         },
         menuFormValidate: {
           title: [{ required: true, message: "名称不能为空", trigger: "blur" }],
@@ -470,7 +470,6 @@
             }
             this.menuForm.children=[]
             editMenu(this.menuForm).then(res => {
-              debugger
               this.submitLoading = false;
               if (res.success) {
                 this.$Message.success("编辑成功");
@@ -578,7 +577,6 @@
                 util.initRouter(this);
                 this.selectList = [];
                 this.selectCount = 0;
-                debugger
                 this.cancelEdit();
                 this.init();
               }else{

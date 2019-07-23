@@ -2,9 +2,6 @@ import axios from 'axios';
 import { getStore, setStore } from './storage';
 import { router } from '../router/index';
 import { Message } from 'iview';
-import Cookies from 'js-cookie';
-import gbs from '../libs/constant'
-import qs from 'qs';
 let base="/sparrow"
 // 统一请求路径前缀
 // 超时设定

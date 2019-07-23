@@ -233,59 +233,28 @@ util.fullscreenEvent = function (vm) {
 };
 
 util.initRouter = function (vm,menuList) {
-    const constRoutes = [];
-    const otherRoutes = [];
-
-    // 404路由需要和动态路由一起注入
-    const otherRouter = [{
-        path: '/*',
-        name: 'error-404',
-        meta: {
-            title: '404-页面不存在'
-        },
-        component:'error-page/404'
-    }];
-
     // 判断用户是否登录
     let userInfo = getStore('userInfo')
     if (userInfo === null || userInfo === "" || userInfo === undefined) {
         // 未登录
         return;
     }
-    // 加载菜单
-       getMenuList().then(res=>{
-         if(res.success){
-           let menuData = res.result;
-           if (menuData === null || menuData === "" || menuData === undefined) {
-             return;
-           }
-           util.initRouterNode(constRoutes, menuData);
-           util.initRouterNode(otherRoutes, otherRouter);
-           // 添加主界面路由
-           vm.$store.commit('updateAppRouter', constRoutes.filter(item => item.children.length > 0));
-           // 添加全局路由
-           vm.$store.commit('updateDefaultRouter', otherRoutes);
-           // 刷新界面菜单
-           vm.$store.commit('updateMenulist', constRoutes.filter(item => item.children.length > 0));
-
-           let tagsList = [];
-           vm.$store.state.app.routers.map((item) => {
-             if (item.children.length <= 1) {
-               tagsList.push(item.children[0]);
-             } else {
-               tagsList.push(...item.children);
-             }
-           });
-           vm.$store.commit('setTagsList', tagsList);
-         }else{
-           Message.error("登录已失效，请重新登录");
-           vm.$store.commit("clearAllTags",vm.$store);
-           removeAllStore("")
-           vm.$router.push({
-             name: "login"
-           });
-         }
-       })
+    getMenuList().then(res=>{
+        if(res.success){
+            let menuData = res.result;
+            if (menuData === null || menuData === "" || menuData === undefined) {
+                return;
+            }
+            util.initMenuData(vm,menuData);
+        }else{
+            Message.error("登录已失效，请重新登录");
+            vm.$store.commit("clearAllTags");
+            removeAllStore("")
+            vm.$router.push({
+                name: "login"
+            });
+        }
+    })
 };
 
 // 生成路由节点
@@ -302,11 +271,47 @@ util.initRouterNode = function (routers, data) {
         // 给页面添加权限、标题、第三方网页链接
         meta.permission = menu.permission ? menu.permission : null;
         meta.title = menu.title ? menu.title: null;
-        meta.url = menu.href ? menu.href : null;
+        meta.url = menu.url ? menu.url : null;
         meta.isShow=menu.isShow?menu.isShow:null;
         menu.meta = meta;
         routers.push(menu);
     }
 };
+/**
+ * 初始化菜单
+ * @param vm
+ * @param menuData
+ */
+util.initMenuData=function (vm,menuData) {
+    const constRoutes = [];
+    const otherRoutes = [];
 
+    // 404路由需要和动态路由一起注入
+    const otherRouter = [{
+        path: '/*',
+        name: 'error-404',
+        meta: {
+            title: '404-页面不存在'
+        },
+        component:'error-page/404'
+    }];
+    util.initRouterNode(constRoutes, menuData);
+    util.initRouterNode(otherRoutes, otherRouter);
+    // 添加主界面路由
+    vm.$store.commit('updateAppRouter', constRoutes.filter(item => item.children.length > 0));
+    // 添加全局路由
+    vm.$store.commit('updateDefaultRouter', otherRoutes);
+    // 刷新界面菜单
+    vm.$store.commit('updateMenulist', constRoutes.filter(item => item.children.length > 0));
+
+    let tagsList = [];
+    vm.$store.state.app.routers.map((item) => {
+        if (item.children.length <= 1) {
+            tagsList.push(item.children[0]);
+        } else {
+            tagsList.push(...item.children);
+        }
+    });
+    vm.$store.commit('setTagsList', tagsList);
+}
 export default util;

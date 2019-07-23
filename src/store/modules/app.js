@@ -8,6 +8,7 @@ const app = {
     state: {
         cachePage: [],
         lang: '',
+        added: false, // 加载路由标识
         isFullScreen: false,
         openedSubmenuArr: [], // 要展开的菜单数组
         menuTheme: 'dark', // 主题
@@ -99,6 +100,9 @@ const app = {
             state.pageOpenedList.splice(1);
             state.cachePage.length = 0;
             localStorage.pageOpenedList = JSON.stringify(state.pageOpenedList);
+        },
+        setAdded(state, v) {
+            state.added = v;
         },
         clearOtherTags(state, vm) {
             let currentName = vm.$route.name;

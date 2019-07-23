@@ -92,27 +92,25 @@
           if (valid) {
             this.loading = true;
             login({username:this.form.userName,password:this.form.password,code:this.form.imageCode,captchaId:this.captchaId}).then(res=>{
-                 if(typeof(res.code)!='undefined'){
-                    if(res.code!=200){
-                       this.getVerifyCode();
-                       this.loading = false;
-                    }
-                 }else {
-                   this.setStore("accessToken",res.access_token);
-                   userInfo().then(res => {
-                     if (res.success) {
-                       this.setStore("userInfo", res.result);
-                       this.$store.commit("setAvatarPath", res.result.avatar);
-                       // 加载菜单
-                       util.initRouter(this);
-                       this.$router.push({
-                         name: "home_index"
-                       });
-                     } else {
-                       this.loading = false;
-                     }
-                   });
-                 }
+              if(res.success){
+                this.setStore("accessToken",res.result.accessToken);
+                userInfo().then(res => {
+                  if (res.success) {
+                    this.setStore("userInfo", res.result);
+                    this.$store.commit("setAvatarPath", res.result.avatar);
+                    // 加载菜单
+                    util.initRouter(this);
+                    this.$router.push({
+                      name: "home_index"
+                    });
+                  } else {
+                    this.loading = false;
+                  }
+                });
+              }else{
+                this.getVerifyCode();
+                this.loading = false;
+              }
             })
           }
         });
