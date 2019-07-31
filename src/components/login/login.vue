@@ -18,26 +18,26 @@
             <FormItem prop="password">
               <Input v-model="form.password" type="password" size="large" clearable placeholder="请输入密码" :maxlength="10"  />
             </FormItem>
-            <FormItem prop="imageCode">
-              <Row type="flex" justify="space-between" style="align-items: center;overflow: hidden;flex-wrap: nowrap;">
-                <Input v-model="form.imageCode" size="large" clearable placeholder="请输入验证码" :maxlength="10" class="input-verify" />
-                <div style="position:relative;margin-left: 5px;">
-                  <Spin v-if="loadingCode" fix></Spin>
-                  <img :src="verifyCodeImg"  @click="getVerifyCode" alt="加载验证码失败" style="width:100%;cursor:pointer;display:block">
-                </div>
-              </Row>
-            </FormItem>
-            <!--<FormItem>-->
-              <!--<div style="width: 100%;height: 36px;">-->
-                <!--<div id="vaptchaContainer"></div>-->
-                <!--<div v-if="loadingVaptcha" class="vaptcha-init-main">-->
-                  <!--<div class="vaptcha-loading">-->
-                    <!--<img src="@/assets/vaptcha-loading.gif" />-->
-                    <!--<span class="vaptcha-text">Vaptcha启动中...</span>-->
-                  <!--</div>-->
+            <!--<FormItem prop="imageCode">-->
+              <!--<Row type="flex" justify="space-between" style="align-items: center;overflow: hidden;flex-wrap: nowrap;">-->
+                <!--<Input v-model="form.imageCode" size="large" clearable placeholder="请输入验证码" :maxlength="10" class="input-verify" />-->
+                <!--<div style="position:relative;margin-left: 5px;">-->
+                  <!--<Spin v-if="loadingCode" fix></Spin>-->
+                  <!--<img :src="verifyCodeImg"  @click="getVerifyCode" alt="加载验证码失败" style="width:100%;cursor:pointer;display:block">-->
                 <!--</div>-->
-              <!--</div>-->
+              <!--</Row>-->
             <!--</FormItem>-->
+            <FormItem>
+              <div style="width: 100%;height: 36px;">
+                <div id="vaptchaContainer"></div>
+                <div v-if="loadingVaptcha" class="vaptcha-init-main">
+                  <div class="vaptcha-loading">
+                    <img src="https://cdn.vaptcha.com/vaptcha-loading.gif" />
+                    <span class="vaptcha-text">Vaptcha启动中...</span>
+                  </div>
+                </div>
+              </div>
+            </FormItem>
             <FormItem>
               <Button @click="handleSubmit" :loading="loading" type="primary" size="large" long>
                 <span v-if="!loading">登录</span>
@@ -67,7 +67,7 @@
         form: {
           userName: 'admin',
           password: '',
-          imageCode:''
+          token:''
         },
         rules: {
           userName: [
@@ -75,23 +75,20 @@
           ],
           password: [
             { required: true, message: '密码不能为空', trigger: 'blur' }
-          ],
-          imageCode: [
-            {
-              required: true,
-              message: "图形验证码不能为空",
-              trigger: "blur"
-            }
-          ],
+          ]
         }
       };
     },
     methods: {
       handleSubmit () {
+        if(this.form.token==null||this.form.token==''){
+          this.$Message.error("请先进行人机验证..");
+          return
+        }
         this.$refs.loginForm.validate((valid) => {
           if (valid) {
             this.loading = true;
-            login({username:this.form.userName,password:this.form.password,code:this.form.imageCode,captchaId:this.captchaId}).then(res=>{
+            login({username:this.form.userName,password:this.form.password,token:this.form.token}).then(res=>{
               if(res.success){
                 this.setStore("accessToken",res.result.accessToken);
                 userInfo().then(res => {
@@ -108,7 +105,7 @@
                   }
                 });
               }else{
-                this.getVerifyCode();
+                this.initVaptcha();
                 this.loading = false;
               }
             })
@@ -142,8 +139,8 @@
       },
     },
     mounted() {
-      this.initImage();
-      //this.initVaptcha()
+      //this.initImage();
+      this.initVaptcha()
     }
   };
 </script>

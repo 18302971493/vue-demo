@@ -1,7 +1,6 @@
 import { otherRouter } from '@/router/router';
 import { router } from '@/router/index';
 import Util from '@/libs/util';
-import Cookies from 'js-cookie';
 import Vue from 'vue';
 
 const app = {
@@ -13,6 +12,7 @@ const app = {
         openedSubmenuArr: [], // 要展开的菜单数组
         menuTheme: 'dark', // 主题
         themeColor: '',
+        http:localStorage.httpServer,
         pageOpenedList: [{
             title: '首页',
             path: '',
@@ -52,6 +52,9 @@ const app = {
         },
         updateMenulist(state, routes) {
             state.menuList = routes;
+        },
+        setHttp(state,value){
+            state.http=value;
         },
         addOpenSubmenu(state, name) {
             let hasThisName = false;

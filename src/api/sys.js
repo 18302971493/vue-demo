@@ -20,7 +20,7 @@ export function login(params){
   params.login_type='pc'
   return ajax({
     method: 'post',
-    url: "/auth/form/login",
+    url: "/auth/login",
     params: params
   });
 }
@@ -552,4 +552,19 @@ export const editOssSet = (params) => {
     url:gbs.SERVICE.sys+'/setting/oss/set',
     params:params
   })
+}
+
+export function findAreaList(level) {
+  return ajax({
+    method: 'get',
+    url:gbs.SERVICE.sys+`/area/findList/${level}`,
+  });
+}
+
+export function findAreaChildren(value) {
+  console.log(value)
+  return ajax({
+    method: 'get',
+    url:gbs.SERVICE.sys+`/area/findAreaChildren/${value}`,
+  });
 }

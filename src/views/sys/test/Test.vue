@@ -6,13 +6,9 @@
     <Row>
       <Col>
         <Card>
-          <Row>
-            <Form ref="userForm" :model="userForm" :label-width="70" >
+            <Form ref="userForm" :model="userForm" :label-width="70" style="width: 50%">
               <FormItem label="用户名" prop="username">
                 <Input v-model="userForm.username" autocomplete="off"/>
-              </FormItem>
-              <FormItem label="密码" prop="password" v-if="modalType===0" :error="errorPass">
-                <Input type="password" v-model="userForm.password" autocomplete="off"/>
               </FormItem>
               <FormItem label="邮箱" prop="email">
                 <Input v-model="userForm.email"/>
@@ -40,16 +36,17 @@
                   <Option :value="1">管理员</Option>
                 </Select>
               </FormItem>
-              <FormItem label="备注" >
-                <VueEditor path="/test/" :content="this.path" ref="editor"></VueEditor>
+              <FormItem label="区域" prop="type">
+               <area-select v-model="address" @on-change="changeAddress" level="3" searchable/>
               </FormItem>
+              <!--<FormItem label="备注" >-->
+                <!--<VueEditor path="/test/" :content="this.path" ref="editor"></VueEditor>-->
+              <!--</FormItem>-->
             </Form>
             <div >
               <Button type="text" @click="cancelUser">取消</Button>
               <Button type="primary" :loading="submitLoading" @click="submit">提交</Button>
             </div>
-          </Row>
-
         </Card>
       </Col>
     </Row>
@@ -59,48 +56,21 @@
 <script>
   import VueEditor from '@/views/editor/VueEditor.vue'
   import circleLoading from "../../../components/my-components/circle-loading";
+  import areaSelect from "@/components/my-components/area-select";
   export default {
     name: "user-manage",
     components: {
       circleLoading,
-      VueEditor
+      VueEditor,
+      areaSelect
     },
     data() {
       return {
         accessToken: {},
         dpLoading: false, // 部门树加载
         loading: true,
-        operationLoading: false,
-        loadingExport: true,
-        modalExportAll: false,
-        drop: false,
-        dropDownContent: "展开",
-        dropDownIcon: "ios-arrow-down",
-        selectCount: 0,
-        selectList: [],
-        viewImage: false,
-        department: [],
-        selectDep: [],
-        dataDep: [],
-        searchKey: "",
+        address:{"proId":463,"cityId":505,"countyId":509},
         path:"<img src=\"http://tx.haiqq.com/uploads/allimg/160824/1126355296-0.jpg\" style=\"max-width:100%;\"><br></p>",
-        searchForm: {
-          username: "",
-          officeId: "",
-          mobile: "",
-          email: "",
-          sex: "",
-          type: "",
-          status: "",
-          pageNo: 1,
-          pageSize: 10,
-          sort: "create_time",
-          order: "desc",
-        },
-        selectDate: null,
-        modalType: 0,
-        userModalVisible: false,
-        modalTitle: "",
         userForm: {
           sex: 1,
           type: 0,
@@ -110,9 +80,6 @@
           officeTitle: "",
           menuList: []
         },
-        userRoles: [],
-        roleList: [],
-        errorPass: "",
         userFormValidate: {
           username: [
             {required: true, message: "账号不能为空", trigger: "blur"}
@@ -126,287 +93,6 @@
           ]
         },
         submitLoading: false,
-        columns: [
-          {
-            type: "selection",
-            width: 60,
-            align: "center",
-            fixed: "left"
-          },
-          {
-            type: "index",
-            width: 60,
-            align: "center",
-            fixed: "left"
-          },
-          {
-            title: "用户名",
-            key: "username",
-            width: 145,
-            sortable: true,
-            fixed: "left"
-          },
-          {
-            title: "头像",
-            key: "avatar",
-            width: 80,
-            align: "center",
-            render: (h, params) => {
-              return h("Avatar", {
-                props: {
-                  src: params.row.avatar
-                }
-              });
-            }
-          },
-          {
-            title: "所属部门",
-            key: "officeTitle",
-            width: 120
-          },
-          {
-            title: "手机",
-            key: "mobile",
-            width: 115,
-            sortable: true,
-            render: (h, params) => {
-              return h("span", params.row.mobile);
-            }
-          },
-          {
-            title: "邮箱",
-            key: "email",
-            width: 180,
-            sortable: true
-          },
-          {
-            title: "性别",
-            key: "sex",
-            width: 70,
-            align: "center",
-            render: (h, params) => {
-              let re = "";
-              this.dictSex.forEach(e => {
-                if (e.value == params.row.sex) {
-                  re = e.label;
-                }
-              });
-              return h("div", re);
-            }
-          },
-          {
-            title: "用户类型",
-            key: "type",
-            align: "center",
-            width: 100,
-            render: (h, params) => {
-              let re = "";
-              if (params.row.type === 1) {
-                re = "管理员";
-              } else if (params.row.type === 0) {
-                re = "普通用户";
-              }
-              return h("div", re);
-            }
-          },
-          {
-            title: "状态",
-            key: "status",
-            align: "center",
-            width: 140,
-            render: (h, params) => {
-              let re = "";
-              if (params.row.status === 0) {
-                return h("div", [
-                  h(
-                    "Tag",
-                    {
-                      props: {
-                        type: "dot",
-                        color: "success"
-                      }
-                    },
-                    "正常启用"
-                  )
-                ]);
-              } else if (params.row.status === -1) {
-                return h("div", [
-                  h(
-                    "Tag",
-                    {
-                      props: {
-                        type: "dot",
-                        color: "error"
-                      }
-                    },
-                    "禁用"
-                  )
-                ]);
-              }
-            },
-            filters: [
-              {
-                label: "正常启用",
-                value: 0
-              },
-              {
-                label: "禁用",
-                value: -1
-              }
-            ],
-            filterMultiple: false,
-            filterMethod(value, row) {
-              if (value === 0) {
-                return row.status === 0;
-              } else if (value === -1) {
-                return row.status === -1;
-              }
-            }
-          },
-          {
-            title: "创建时间",
-            key: "createTime",
-            sortable: true,
-            sortType: "desc",
-            width: 150
-          },
-          {
-            title: "操作",
-            key: "action",
-            width: 200,
-            align: "center",
-            render: (h, params) => {
-              let enableOrDisable = "";
-              if (params.row.status == 0) {
-                enableOrDisable = h(
-                  "Button",
-                  {
-                    props: {
-                      size: "small"
-                    },
-                    style: {
-                      marginRight: "5px"
-                    },
-                    on: {
-                      click: () => {
-                        this.disable(params.row);
-                      }
-                    }
-                  },
-                  "禁用"
-                );
-              } else if (params.row.status == -1) {
-                enableOrDisable = h(
-                  "Button",
-                  {
-                    props: {
-                      type: "success",
-                      size: "small"
-                    },
-                    style: {
-                      marginRight: "5px"
-                    },
-                    on: {
-                      click: () => {
-                        this.enable(params.row);
-                      }
-                    }
-                  },
-                  "启用"
-                );
-              }
-              return h("div", [
-                h(
-                  "Button",
-                  {
-                    props: {
-                      type: "primary",
-                      size: "small"
-                    },
-                    style: {
-                      marginRight: "5px"
-                    },
-                    on: {
-                      click: () => {
-                        this.edit(params.row);
-                      }
-                    }
-                  },
-                  "编辑"
-                ),
-                enableOrDisable,
-                h(
-                  "Button",
-                  {
-                    props: {
-                      type: "error",
-                      size: "small"
-                    },
-                    on: {
-                      click: () => {
-                        this.remove(params.row);
-                      }
-                    }
-                  },
-                  "删除"
-                )
-              ]);
-            }
-          }
-        ],
-        exportColumns: [
-          {
-            title: "用户名",
-            key: "username"
-          },
-          {
-            title: "头像",
-            key: "avatar"
-          },
-          {
-            title: "所属部门ID",
-            key: "officeId"
-          },
-          {
-            title: "所属部门",
-            key: "officeTitle"
-          },
-          {
-            title: "手机",
-            key: "mobile"
-          },
-          {
-            title: "邮箱",
-            key: "email"
-          },
-          {
-            title: "性别",
-            key: "sex"
-          },
-          {
-            title: "用户类型",
-            key: "type"
-          },
-          {
-            title: "状态",
-            key: "status"
-          },
-          {
-            title: "删除标志",
-            key: "delFlag"
-          },
-          {
-            title: "创建时间",
-            key: "createTime"
-          },
-          {
-            title: "更新时间",
-            key: "updateTime"
-          }
-        ],
-        data: [],
-        exportData: [],
-        total: 0,
         dictSex: []
       };
     },
@@ -431,6 +117,10 @@
       changePageSize(v) {
         this.searchForm.pageSize = v;
         this.getUserList();
+      },
+      changeAddress(data) {
+        console.log(data)
+        this.address=data
       },
       submit(){
         this.myeditor=this.$refs.editor.getHtml();

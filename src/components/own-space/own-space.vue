@@ -209,21 +209,6 @@ export default {
       editEmailVisible: false,
       sendVerifyEmailLoading: false,
       canSendEditEmail: true,
-      github: {
-        related: false,
-        id: "",
-        username: ""
-      },
-      qq: {
-        related: false,
-        id: "",
-        username: ""
-      },
-      weibo: {
-        related: false,
-        id: "",
-        username: ""
-      },
       jumping: false,
       dictSex: []
     };

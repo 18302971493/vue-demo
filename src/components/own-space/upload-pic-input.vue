@@ -1,38 +1,42 @@
 <template>
-  <div>
+  <div style="display: flex;">
     <Poptip trigger="hover" title="图片预览" placement="right" width="350">
       <Input
-        v-model="picUrl"
-        @on-change="handleChange"
-        placeholder="可直接填入网络图片链接"
-        :style="{width: width}"
-        clearable
+              v-model="currentValue"
+              @on-change="handleChange"
+              :placeholder="placeholder"
+              :size="size"
+              :disabled="disabled"
+              :readonly="readonly"
+              :maxlength="maxlength"
+              :style="{width: width}"
+              clearable
       />
       <div slot="content">
-        <img :src="picUrl" alt="无效的图片链接" style="width: 100%;margin: 0 auto;display: block;">
+        <img :src="currentValue" alt="无效的图片链接" style="width: 100%;margin: 0 auto;display: block;">
         <a @click="viewImage=true" style="margin-top:5px;text-align:right;display:block">查看大图</a>
       </div>
     </Poptip>
     <Upload
-      :action="uploadFileUrl"
-      :headers="accessToken"
-      :on-success="handleSuccess"
-      :on-error="handleError"
-      :format="['jpg','jpeg','png','gif','bmp']"
-      accept=".jpg, .jpeg, .png, .gif, .bmp"
-      :max-size="5120"
-      :on-format-error="handleFormatError"
-      :on-exceeded-size="handleMaxSize"
-      :before-upload="beforeUpload"
-      :show-upload-list="false"
-      ref="up"
-      class="upload"
+            :action="uploadFileUrl"
+            :headers="accessToken"
+            :on-success="handleSuccess"
+            :on-error="handleError"
+            :format="['jpg','jpeg','png','gif','bmp']"
+            accept=".jpg, .jpeg, .png, .gif, .bmp"
+            :max-size="5120"
+            :on-format-error="handleFormatError"
+            :on-exceeded-size="handleMaxSize"
+            :before-upload="beforeUpload"
+            :show-upload-list="false"
+            ref="up"
+            class="upload"
     >
-      <Button :loading="loading" icon="ios-cloud-upload-outline">上传图片</Button>
+      <Button :loading="loading" :size="size" :disabled="disabled" :icon="icon">上传图片</Button>
     </Upload>
 
     <Modal title="图片预览" v-model="viewImage" :styles="{top: '30px'}" draggable>
-      <img :src="picUrl" alt="无效的图片链接" style="width: 100%;margin: 0 auto;display: block;">
+      <img :src="currentValue" alt="无效的图片链接" style="width: 100%;margin: 0 auto;display: block;">
       <div slot="footer">
         <Button @click="viewImage=false">关闭</Button>
       </div>
@@ -41,86 +45,113 @@
 </template>
 
 <script>
-import { uploadFile } from "@/api/sys";
-export default {
-  name: "uploadPicInput",
-  props: {
-    width: {
-      type: String,
-      default: "200px"
-    },
-    picUrl: {
-      type: String,
-      default: "http://tx.haiqq.com/uploads/allimg/160824/1126355296-0.jpg"
-    }
-  },
-  data() {
-    return {
-      accessToken: {},
-      loading: false,
-      viewImage: false,
-      uploadFileUrl: uploadFile
-    };
-  },
-  methods: {
-    init() {
-      this.accessToken = {
-        Authorization: "Bearer "+this.getStore("accessToken")
-      };
-    },
-    handleFormatError(file) {
-      this.loading = false;
-      this.$Notice.warning({
-        title: "不支持的文件格式",
-        desc:
-          "所选文件‘ " +
-          file.name +
-          " ’格式不正确, 请选择 .jpg .jpeg .png .gif .bmp格式文件"
-      });
-    },
-    handleMaxSize(file) {
-      this.loading = false;
-      this.$Notice.warning({
-        title: "文件大小过大",
-        desc: "所选文件‘ " + file.name + " ’大小过大, 不得超过 5M."
-      });
-    },
-    beforeUpload() {
-      this.loading = true;
-      return true;
-    },
-    handleSuccess(res, file) {
-      this.loading = false;
-      if (res.success === true) {
-        file.url = res.result;
-        this.picUrl = res.result;
-        this.$emit("on-change", this.picUrl);
-      } else {
-        this.$Message.error(res.message);
+  import { uploadFile } from "@/api/sys";
+  export default {
+    name: "uploadPicInput",
+    props: {
+      width: {
+        type: String,
+        default: "285px"
+      },
+      value: String,
+      size: String,
+      placeholder: {
+        type: String,
+        default: "可输入图片链接"
+      },
+      disabled: {
+        type: Boolean,
+        default: false
+      },
+      readonly: {
+        type: Boolean,
+        default: false
+      },
+      maxlength: Number,
+      icon: {
+        type: String,
+        default: "ios-cloud-upload-outline"
       }
     },
-    handleError(error, file, fileList) {
-      this.loading = false;
-      this.$Message.error(error.toString());
+    data() {
+      return {
+        accessToken: {},
+        currentValue: this.value,
+        formValue:'',
+        loading: false,
+        viewImage: false,
+        uploadFileUrl: uploadFile
+      };
     },
-    handleChange(v) {
-      this.$emit("on-change", this.picUrl);
+    methods: {
+      init() {
+        this.accessToken = {
+          accessToken: this.getStore("accessToken")
+        };
+      },
+      handleFormatError(file) {
+        this.loading = false;
+        this.$Notice.warning({
+          title: "不支持的文件格式",
+          desc:
+                  "所选文件‘ " +
+                  file.name +
+                  " ’格式不正确, 请选择 .jpg .jpeg .png .gif .bmp格式文件"
+        });
+      },
+      handleMaxSize(file) {
+        this.loading = false;
+        this.$Notice.warning({
+          title: "文件大小过大",
+          desc: "所选文件‘ " + file.name + " ’大小过大, 不得超过 5M."
+        });
+      },
+      beforeUpload() {
+        this.loading = true;
+        return true;
+      },
+      handleSuccess(res, file) {
+        this.loading = false;
+        if (res.success) {
+          file.url = res.result;
+          this.currentValue= res.result;
+          this.$emit("input", this.currentValue);
+          this.$emit("on-change", this.currentValue);
+        } else {
+          this.$Message.error(res.message);
+        }
+      },
+      handleError(error, file, fileList) {
+        this.loading = false;
+        this.$Message.error(error.toString());
+      },
+      handleChange(v) {
+        this.$emit("input", this.currentValue);
+        this.$emit("on-change", this.currentValue);
+      },
+      setCurrentValue(value) {
+        if (value === this.currentValue) {
+          return;
+        }
+        this.currentValue = value;
+        this.$emit("on-change", this.currentValue);
+      }
     },
-    setPicUrl(v) {
-      this.picUrl = v;
-      this.$emit("on-change", this.picUrl);
+    watch: {
+      value(val) {
+        this.setCurrentValue(val);
+      }
+    },
+    created() {
+      this.init();
     }
-  },
-  created() {
-    this.init();
-  }
-};
+  };
 </script>
 
 <style lang="less">
-.upload {
-  display: inline-block;
-  margin-left: 10px;
-}
+  .upload {
+    display: inline-block;
+    margin-left: 10px;
+  }
 </style>
 

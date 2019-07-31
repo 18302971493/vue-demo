@@ -112,21 +112,22 @@
                     </RadioGroup>
                 </FormItem>
                 <Form-item label="头像" prop="avatar">
-                    <upload-pic-input @on-change="handleUpload" :picUrl="userForm.avatar" width="285px" ref="upload"></upload-pic-input>
+                    <upload-pic-input v-model="userForm.avatar" @on-change="handleUploadFile" ref="uploadPic"></upload-pic-input>
                 </Form-item>
                 <Form-item label="所属部门" prop="officeTitle">
-                    <Poptip trigger="click" placement="right" title="选择部门" width="250">
-                        <div style="display:flex;">
-                            <Input v-model="userForm.officeTitle" readonly style="margin-right:10px;"/>
-                            <Button icon="md-trash" @click="clearSelectDep">清空已选</Button>
-                        </div>
-                        <div slot="content" class="tree-bar">
-                            <Input v-model="searchKey" suffix="ios-search" @on-change="searchDp" placeholder="输入部门名搜索"
-                                   clearable/>
-                            <Tree :data="dataDep" :load-data="loadDataTree" @on-select-change="selectTree"></Tree>
-                            <Spin size="large" fix v-if="dpLoading"></Spin>
-                        </div>
-                    </Poptip>
+                    <!--<Poptip trigger="click" placement="right" title="选择部门">-->
+                    <!--<div style="display:flex;">-->
+                    <!--<Input v-model="userForm.officeTitle" readonly style="margin-right:10px;"/>-->
+                    <!--<Button icon="md-trash" @click="clearSelectDep">清空已选</Button>-->
+                    <!--</div>-->
+                    <!--<div slot="content" class="tree-bar">-->
+                    <!--<Input v-model="searchKey" suffix="ios-search" @on-change="searchDp" placeholder="输入部门名搜索"-->
+                    <!--clearable/>-->
+                    <!--<Tree :data="dataDep" :load-data="loadDataTree" @on-select-change="selectTree"></Tree>-->
+                    <!--<Spin size="large" fix v-if="dpLoading"></Spin>-->
+                    <!--</div>-->
+                    <!--</Poptip>-->
+                    <office-tree-choose @on-change="handleSelectDepTree" ref="depTree"></office-tree-choose>
                 </Form-item>
                 <FormItem label="用户类型" prop="type">
                     <Select v-model="userForm.type" placeholder="请选择">
@@ -178,18 +179,19 @@
         disableUser,
         deleteUser,
         getAllUserData,
-        searchDepartment,
         uploadFile,
         findDictByType
     } from "../../../api/sys";
     import circleLoading from "../../../components/my-components/circle-loading";
     import uploadPicInput from "@/components/own-space/upload-pic-input";
+    import officeTreeChoose from "@/components/own-space/office-tree-choose";
 
     export default {
         name: "user-manage",
         components: {
             circleLoading,
-            uploadPicInput
+            uploadPicInput,
+            officeTreeChoose
         },
         data() {
             const validatePassword = (rule, value, callback) => {
@@ -563,8 +565,9 @@
                 this.initDepartmentTreeData();
                 this.getDictSexData();
             },
-            handleUpload(v) {
-                this.userForm.avatar = v;
+            handleSelectDepTree(v) {
+                this.userForm.officeId = v[0];
+                this.userForm.officeTitle = v[1];
             },
             initDepartmentData() {
                 initDepartment().then(res => {
@@ -647,26 +650,6 @@
                     }
                 });
             },
-            searchDp() {
-                // 搜索部门
-                if (this.searchKey) {
-                    this.dpLoading = true;
-                    searchDepartment({title: this.searchKey}).then(res => {
-                        this.dpLoading = false;
-                        if (res.success) {
-                            res.result.forEach(function (e) {
-                                if (e.status === -1) {
-                                    e.title = "[已禁用] " + e.title;
-                                    e.disabled = true;
-                                }
-                            });
-                            this.dataDep = res.result;
-                        }
-                    });
-                } else {
-                    this.initDepartmentTreeData();
-                }
-            },
             selectTree(v) {
                 if (v.length > 0) {
                     // 转换null为""
@@ -691,14 +674,6 @@
                     this.searchForm.officeId = value[value.length - 1];
                 } else {
                     this.searchForm.officeId = "";
-                }
-            },
-            handleChangeUserFormDep(value, selectedData) {
-                // 获取最后一个值
-                if (value && value.length > 0) {
-                    this.userForm.officeId = value[value.length - 1];
-                } else {
-                    this.userForm.officeId = "";
                 }
             },
             changePage(v) {
@@ -845,13 +820,14 @@
                     this.$Message.error("不能编辑超级管理员");
                     return
                 }
-
                 this.modalType = 1;
                 this.modalTitle = "编辑用户";
                 this.$refs.userForm.resetFields();
                 let str = JSON.stringify(v);
                 let userInfo = JSON.parse(str);
                 this.userForm = userInfo;
+                this.$refs.depTree.setData([this.userForm.officeId], this.userForm.officeTitle);
+                this.$refs.uploadPic.setCurrentValue(this.userForm.avatar);
                 let selectRolesId = [];
                 this.userForm.roleList.forEach(function (e) {
                     selectRolesId.push(e.id);
@@ -944,6 +920,9 @@
             },
             clearSelectAll() {
                 this.$refs.table.selectAll(false);
+            },
+            handleUploadFile(v){
+               this.userForm.avatar=v;
             },
             delAll() {
                 if (this.selectCount <= 0) {

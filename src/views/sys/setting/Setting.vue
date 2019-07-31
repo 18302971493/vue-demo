@@ -180,7 +180,8 @@
           accessKey: "",
           secretKey: "",
           endpoint: "",
-          bucket: ""
+          bucket: "",
+          filePath:'',
         },
         payForm:{
           payType:'aliPay',
@@ -380,6 +381,7 @@
           editOssSet(this.oss).then(res => {
             this.saveLoading = false;
             if (res.success) {
+              this.$store.commit('setHttp', this.oss);
               this.$Message.success("保存成功");
             }
           });

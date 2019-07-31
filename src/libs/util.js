@@ -4,15 +4,12 @@ import lazyLoading from './lazyLoading.js';
 import Cookies from "js-cookie";
 import {getStore,removeAllStore} from "./storage";
 import { Message } from 'iview';
-let util = {
-
-};
+let util = {};
 
 util.title = function (title) {
     title = title || '后台管理';
     window.document.title = title;
 };
-
 util.inOf = function (arr, targetArr) {
     let res = true;
     arr.forEach(item => {
