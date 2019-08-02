@@ -6,7 +6,7 @@
     <Row>
       <Col>
         <Card>
-            <Form ref="userForm" :model="userForm" :label-width="70" style="width: 50%">
+            <Form ref="userForm" :model="userForm" :label-width="100" style="width: 50%">
               <FormItem label="用户名" prop="username">
                 <Input v-model="userForm.username" autocomplete="off"/>
               </FormItem>
@@ -39,9 +39,12 @@
               <FormItem label="区域" prop="type">
                <area-select v-model="address" @on-change="changeAddress" level="3" searchable/>
               </FormItem>
-              <!--<FormItem label="备注" >-->
-                <!--<VueEditor path="/test/" :content="this.path" ref="editor"></VueEditor>-->
-              <!--</FormItem>-->
+              <FormItem label="多文件上传">
+                <upload-file :defaultList="defaultList" @on-change="changeList" :width="600" :height="400" />
+              </FormItem>
+              <FormItem label="备注" >
+                <VueEditor path="/test/" :content="this.path" ref="editor"></VueEditor>
+              </FormItem>
             </Form>
             <div >
               <Button type="text" @click="cancelUser">取消</Button>
@@ -57,12 +60,14 @@
   import VueEditor from '@/views/editor/VueEditor.vue'
   import circleLoading from "../../../components/my-components/circle-loading";
   import areaSelect from "@/components/my-components/area-select";
+  import uploadFile from "@/components/my-components/upload-file";
   export default {
     name: "user-manage",
     components: {
       circleLoading,
       VueEditor,
-      areaSelect
+      areaSelect,
+      uploadFile
     },
     data() {
       return {
@@ -80,6 +85,10 @@
           officeTitle: "",
           menuList: []
         },
+        defaultList:[
+          {"url":"http://127.0.0.1:8720/sparrow/file/upload/2019/08/01/0b338b57df4b4b76b263149b73a5ed76.jpg"},
+          {"url":"http://127.0.0.1:8720/sparrow/file/upload/2019/08/01/8b2976dae3854f35a47b1a51cbf2ddff.jpg"}
+        ],
         userFormValidate: {
           username: [
             {required: true, message: "账号不能为空", trigger: "blur"}
@@ -113,6 +122,9 @@
         this.searchForm.pageNo = v;
         this.getUserList();
         this.clearSelectAll();
+      },
+      changeList(v){
+        console.log(v)
       },
       changePageSize(v) {
         this.searchForm.pageSize = v;

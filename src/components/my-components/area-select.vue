@@ -127,7 +127,6 @@
         methods: {
             init(){
                 if (this.value && this.value!=null) {
-                    console.log(this.value)
                     this.cloneValue = this.value;
                     this.findCityChildren();
                     this.findCountyChildren();
