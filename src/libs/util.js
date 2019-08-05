@@ -229,7 +229,7 @@ util.fullscreenEvent = function (vm) {
     vm.$store.commit('initCachepage');
 };
 
-util.initRouter = function (vm,menuList) {
+util.initRouter = function (vm) {
     // 判断用户是否登录
     let userInfo = getStore('userInfo')
     if (userInfo === null || userInfo === "" || userInfo === undefined) {
@@ -259,7 +259,6 @@ util.initRouterNode = function (routers, data) {
     for (var item of data) {
         let menu = Object.assign({}, item);
         menu.component = lazyLoading(menu.component);
-        // menu.title={i18n: menu.name }
         if (item.children && item.children.length > 0) {
             menu.children = [];
             util.initRouterNode(menu.children, item.children);

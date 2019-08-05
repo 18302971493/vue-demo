@@ -403,7 +403,6 @@ export function addMenu(params){
 }
 // 编辑权限
 export function editMenu(params){
-  console.log(params)
   return ajax({
     method: 'post',
     url:gbs.SERVICE.sys+'/menus/edit',

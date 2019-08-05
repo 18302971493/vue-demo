@@ -1,6 +1,6 @@
 <template>
   <div style="display: flex;">
-    <Poptip trigger="hover" title="图片预览" placement="right" width="350">
+    <Poptip trigger="hover" title="图片预览" placement="right" width="350" v-if="isShow">
       <Input
               v-model="currentValue"
               @on-change="handleChange"
@@ -55,6 +55,10 @@
       },
       value: String,
       size: String,
+      isShow:{
+        type:Boolean,
+        default:true
+      },
       placeholder: {
         type: String,
         default: "可输入图片链接"

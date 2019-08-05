@@ -18,8 +18,7 @@ module.exports={
     //微服务ID
     SERVICE: {
         sys: '/sys',
-        bus: '/bus',
         file: '/file',
-        sparrow: '/sparrow'
+        health: '/health'
     }
 }

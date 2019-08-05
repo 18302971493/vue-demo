@@ -50,6 +50,7 @@
 
 <script>
     import {findAreaList,findAreaChildren} from '../../api/sys';
+    import common from '../../libs/common'
     import util from '../../libs';
     const areaLinkageArr = util.levelArr;
     export default {
@@ -126,8 +127,8 @@
         },
         methods: {
             init(){
-                if (this.value && this.value!=null) {
-                    this.cloneValue = this.value;
+                if (!common.isNull(this.value.proId)&&!common.isNull(this.value.cityId)&&!common.isNull(this.value.countyId)) {
+                    this.cloneValue=this.value
                     this.findCityChildren();
                     this.findCountyChildren();
                 }
@@ -162,13 +163,13 @@
             },
             changePro () {
                 this.cloneValue.cityId='';
-                if(this.cloneValue.proId!=''&&typeof(this.cloneValue.proId)!='undefined'){
+                if(!common.isNull(this.cloneValue.proId)){
                     this.findCityChildren()
                 }
             },
             changeCity () {
                 this.cloneValue.countyId='';
-                if(this.cloneValue.cityId!=''&&typeof(this.cloneValue.cityId)!='undefined'){
+                if(!common.isNull(this.cloneValue.cityId)){
                     this.findCountyChildren()
                 }
             },

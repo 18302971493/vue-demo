@@ -123,6 +123,7 @@ export default {
         label: "",
         type:'',
         status: "",
+        createTime:'',
         pageNo: 1, // 当前页数
         pageSize: 10, // 页面大小
         sort: "sortOrder", // 默认排序字段
@@ -349,7 +350,8 @@ export default {
       this.selectList = v;
     },
     changePage(v) {
-      this.searchForm.pageNumber = v;
+      console.log(v)
+      this.searchForm.pageNo = v;
       this.getDataList();
       this.clearSelectAll();
     },
@@ -404,6 +406,7 @@ export default {
     changeSort(e) {
       this.searchForm.sort = e.key;
       this.searchForm.order = e.order;
+      this.searchForm.createTime=e.createTime;
       if (e.order === "normal") {
         this.searchForm.order = "";
       }
@@ -436,6 +439,7 @@ export default {
         if (valid) {
           this.submitLoading = true;
           if (this.modalType === 0) {
+            delete this.form.id;
             addDict(JSON.stringify(this.form)).then(res => {
               this.submitLoading = false;
               if (res.success === true) {
