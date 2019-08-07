@@ -398,9 +398,9 @@ export default {
       })
     },
     test(){
-      util.openNewPage(this, "test");
+      util.openNewPage(this, "test1");
       this.$router.push({
-        name: "test"
+        name: "test1"
       });
     },
     changeSort(e) {

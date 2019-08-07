@@ -1,6 +1,6 @@
 import ajax from '@/libs/axios';
 import gbs from '../libs/constant';
-
+import qs from 'qs'
 
 /**
  * 获取合作伙伴列表数据
@@ -19,7 +19,7 @@ export function getPartnerList(params){
  * @param ids
  * @param params
  */
-export function remove(ids,params){
+export function removeOrganization(ids,params){
     return ajax({
         method: 'delete',
         url:gbs.SERVICE.health+`/organization/delByIds/${ids}`,
@@ -31,11 +31,14 @@ export function remove(ids,params){
  * 编辑合作伙伴
  * @param params
  */
-export function edit(params){
+export function updateOrganization(params){
     return ajax({
         method: 'post',
         url:gbs.SERVICE.health+'/organization/edit',
-        params: params
+        params: params,
+        paramsSerializer: params => {
+            return qs.stringify(params, { indices: false })
+        }
     });
 }
 
@@ -43,11 +46,14 @@ export function edit(params){
  * 保存合作伙伴
  * @param params
  */
-export function save(params){
+export function saveOrganization(params){
     return ajax({
         method: 'post',
         url:gbs.SERVICE.health+'/organization/save',
-        params: params
+        params: params,
+        paramsSerializer: params => {
+            return qs.stringify(params, { indices: false })
+        }
     });
 }
 

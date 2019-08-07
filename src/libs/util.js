@@ -265,7 +265,7 @@ util.initRouterNode = function (routers, data) {
         }
         let meta = {};
         // 给页面添加权限、标题、第三方网页链接
-        meta.permission = menu.permission ? menu.permission : null;
+        meta.permission = menu.permissionList ? menu.permissionList : null;
         meta.title = menu.title ? menu.title: null;
         meta.url = menu.url ? menu.url : null;
         meta.isShow=menu.isShow?menu.isShow:null;

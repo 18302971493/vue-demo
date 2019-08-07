@@ -3,12 +3,23 @@ import { getStore, setStore } from './storage';
 import { router } from '../router/index';
 import { Message } from 'iview';
 let base="/sparrow"
+import qs from 'qs';
 // 统一请求路径前缀
 // 超时设定
 var instance=axios.create({
   baseURL:base,
   withCredentials:true,
   timeout:5000000,
+  paramsSerializer:function (params) {
+    if(params){
+      for(let item of Reflect.ownKeys(params)){
+        if(typeof params[item] == 'object'){
+          delete params[item]
+        }
+      }
+    }
+    return qs.stringify(params)
+  }
 });
 
 instance.interceptors.request.use(config => {
@@ -69,6 +80,7 @@ instance.interceptors.response.use(response => {
     return data;
   }else if(response.status==500){
     Message.error(response.message)
+    router.push('/500');
   }
 }, (err) => {
   var data=JSON.parse(err.response.data);
