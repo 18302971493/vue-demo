@@ -1,4 +1,4 @@
-import ajax from '@/libs/axios';
+import ajax from '@/libs/ajax';
 import gbs from '../libs/constant';
 
 /**

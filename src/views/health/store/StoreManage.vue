@@ -4,18 +4,18 @@
             <Col>
                 <Card>
                     <Row>
-                        <Form ref="searchForm" :model="searchForm" inline :label-width="100" class="search-form">
+                        <Form ref="searchForm" :model="searchForm"   inline :label-width="100">
                             <Form-item label="门店名称" prop="storeName">
                                 <Input type="text" v-model="searchForm.storeName" clearable placeholder="请输入门店名称"
                                        style="width: 200px"/>
                             </Form-item>
-                            <Form-item label="联系电话" prop="storeMobile">
+                            <Form-item label="联系电话"  prop="storeMobile">
                                 <Input type="text" v-model="searchForm.storeMobile" clearable placeholder="请输入联系电话"
                                        style="width: 200px"/>
                             </Form-item>
-                            <Form-item label="归属企业" prop="organizationId">
+                            <Form-item label="归属企业">
                                 <Select v-model="searchForm.organizationId" placeholder="请选择" filterable clearable style="width: 200px">
-                                    <Option v-for="(item, i) in data" :key="i"
+                                    <Option v-for="(item,i) in data" :key="i"
                                             :value="item.id">{{item.name}}</Option>
                                 </Select>
                             </Form-item>
@@ -42,7 +42,7 @@
                         </Alert>
                     </Row>
                     <Row>
-                        <Table :loading="loading" border :columns="columns" :data="data" sortable="custom"
+                        <Table :loading="loading" border :columns="columns" :data="dataList" sortable="custom"
                                @on-sort-change="changeSort" @on-selection-change="showSelect" ref="table"></Table>
                     </Row>
                     <Row type="flex" justify="end" class="page">
@@ -62,7 +62,7 @@
                         </FormItem>
                         <FormItem label="归属企业" prop="organizationId">
                             <Select v-model="form.organizationId" placeholder="请选择" >
-                                <Option :value="item.value" v-for="(item,index) in dictData" :key="index">{{item.label}}</Option>
+                                <Option :value="item.id" v-for="(item,index) in data" :key="index">{{item.name}}</Option>
                             </Select>
                         </FormItem>
                         <FormItem label="工作日" prop="workDay">
@@ -99,7 +99,7 @@
                         </FormItem>
                     </Col>
                     <Col :span="12">
-                        <map-component height="450px;" @on-change="getMapInfo"></map-component>
+                        <map-component v-model="location" height="450px;" @on-change="getMapInfo"></map-component>
                     </Col>
                 </Row>
                 <FormItem label="备注">
@@ -115,15 +115,15 @@
 </template>
 
 <script>
-    import {getPartnerList, removeOrganization,checkMethod,saveOrganization,updateOrganization} from "../../../api/health";
-    import {findDictByType,uploadFile} from "../../../api/sys";
+    import {getStoreList, getOrganizationList,removeStore,saveStore,updateStore} from "../../../api/health";
+    import {uploadFile} from "../../../api/sys";
     import {validateMobile} from '../../../libs/validate'
     import common from "../../../libs/common";
     import areaSelect from "@/components/my-components/area-select";
     import MapComponent from "@/components/my-components/Map-Component";
     import uploadPicInput from "@/components/own-space/upload-pic-input";
     export default {
-        name: "Partner",
+        name: "StoreManage",
         components:{
             areaSelect,
             uploadPicInput,
@@ -132,8 +132,6 @@
         data() {
             return {
                 loading: true,
-                operationLoading: false,
-                drop: false,
                 accessToken:{},
                 selectCount: 0,
                 address:{},
@@ -145,10 +143,11 @@
                 fileName:'',
                 modalTitle:'新增',
                 modalType:1,
+                location:{},
                 searchForm: {
                     storeName: "",
                     storeMobile: "",
-                    organizationId: "",
+                    organizationId:'',
                     state:0,
                     pageNo: 1,
                     pageSize: 10,
@@ -156,8 +155,6 @@
                     order: "desc",
                 },
                 form: {
-                    lat:'',
-                    lng:'',
                     storeName:'',
                     organizationId:'',
                     workDay:'',
@@ -207,43 +204,28 @@
                         type: "index",
                         width: 60,
                         align: "center",
-                        fixed: "left"
                     },
                     {
-                        title: "同一社会信用代码",
-                        key: "businessLicenseCode",
-                        width: 160,
+                        title: "门店编码",
+                        key: "id",
                         sortable: true,
-                        fixed: "left"
+                        align:'center'
                     },
                     {
-                        title: "企业全称",
-                        key: "fullName",
-                        width: 200
+                        title: "门店名称",
+                        key: "storeName",
+                        align:'center'
                     },
                     {
-                        title: "企业类型",
-                        key: "typeName",
-                        width: 120
-                    },
-                    {
-                        title: "联系人姓名",
-                        key: "linkMan",
-                        width: 115
-                    },
-                    {
-                        title: "联系人电话",
-                        key: "mobile",
-                        width: 180,
-                        sortable: true
+                        title: "归属企业",
+                        key: "organizationName",
+                        align:'center'
                     },
                     {
                         title: "状态",
                         key: "state",
                         align: "center",
-                        width: 140,
                         render: (h, params) => {
-                            let re = "";
                             if (params.row.state === 0) {
                                 return h("div", [
                                     h(
@@ -342,21 +324,15 @@
                         }
                     }
                 ],
-                data: [],
+                dataList: [],
+                data:[],
                 total: 0,
-                dictData: [],
-                tagData:[],
-                levelData:[],
-                customizeData:[],
             };
         },
         methods: {
             init() {
                 this.getList();
-                this.getDictData();
-                this.getTagData();
-                this.getLevelData();
-                this.getCustomizeData();
+                this.getPartnerList();
                 this.accessToken = {
                     accessToken: this.getStore("accessToken")
                 };
@@ -368,6 +344,13 @@
             handleUploadFile(){
 
             },
+            getPartnerList(){
+                getOrganizationList().then(res=>{
+                    if(res.success){
+                        this.data=res.result;
+                    }
+                })
+            },
             handleSubmit () {
                 if(common.isObjectNull(this.address)){
                     this.errorMsg='请选择地区';
@@ -377,7 +360,31 @@
                 this.submitLoading=true;
                 this.$refs.form.validate((valid) => {
                     if (valid) {
-
+                        this.submitLoading=false;
+                        if(this.modalType==1){
+                            delete this.form.id;
+                            saveStore(this.form).then(res=>{
+                                if(res.success){
+                                    this.$Message.success('保存成功');
+                                    this.submitLoading=false;
+                                    this.modalVisible=false;
+                                    this.getList();
+                                }else{
+                                    this.$Message.error('保存失败');
+                                }
+                            })
+                        }else{
+                            updateStore(this.form).then(res=>{
+                                if(res.success){
+                                    this.$Message.success('修改成功');
+                                    this.submitLoading=false;
+                                    this.modalVisible=false;
+                                    this.getList();
+                                }else{
+                                    this.$Message.error('修改失败');
+                                }
+                            })
+                        }
                     }
                     this.submitLoading=false;
                 })
@@ -399,8 +406,8 @@
                 this.$refs.table.selectAll(false);
             },
             getMapInfo(v){
-                this.form.lat=v.lat;
-                this.form.lng=v.lng;
+                this.form.storeLongitude=v.lng;
+                this.form.storeLatitude=v.lat;
             },
             add(){
                 this.errorMsg=''
@@ -409,21 +416,23 @@
                 this.modalVisible=true;
             },
             edit(v){
-                this.$refs.form.resetFields();
-                this.form=v;
                 this.modalTitle='修改';
                 this.errorMsg=''
+                this.$refs.form.resetFields();
+                var str=JSON.stringify(v);
+                this.form=JSON.parse(str);
                 this.address={"proId":this.form.provinceId,"cityId":this.form.cityId,"countyId":this.form.countyId};
+                this.location={lng:this.form.storeLongitude,lat:this.form.storeLatitude}
                 this.modalType=2;
                 this.modalVisible=true;
             },
             getList() {
                 // 多条件搜索用户列表
                 this.loading = true;
-                getPartnerList(this.searchForm).then(res => {
+                getStoreList(this.searchForm).then(res => {
                     this.loading = false;
                     if (res.success === true) {
-                        this.data = res.result.records;
+                        this.dataList = res.result.records;
                         this.total = res.result.total;
                     }
                 });
@@ -451,9 +460,9 @@
             remove(v) {
                 this.$Modal.confirm({
                     title: "确认删除",
-                    content: "您确认要删除企业 " + v.name + " ?",
+                    content: "您确认要删除门店 " + v.storeName + " ?",
                     onOk: () => {
-                        removeOrganization(v.id).then(res => {
+                        removeStore(v.id).then(res => {
                             if (res.success === true) {
                                 this.$Message.success("删除成功");
                                 this.getList();
@@ -461,38 +470,6 @@
                         });
                     }
                 });
-            },
-            getDictData() {
-                // 获取企业类型字典数据
-                findDictByType({type: 'organization_type'}).then(res => {
-                    if (res.success) {
-                        this.dictData = res.result
-                    }
-                })
-            },
-            getTagData() {
-                // 获取企业标签数据
-                findDictByType({type: 'organization_tag'}).then(res => {
-                    if (res.success) {
-                        this.tagData = res.result
-                    }
-                })
-            },
-            getLevelData() {
-                // 获取企业标签数据
-                findDictByType({type: 'hospital_level'}).then(res => {
-                    if (res.success) {
-                        this.levelData = res.result
-                    }
-                })
-            },
-            getCustomizeData() {
-                // 获取企业标签数据
-                findDictByType({type: 'if_customize'}).then(res => {
-                    if (res.success) {
-                        this.customizeData = res.result
-                    }
-                })
             },
             delAll() {
                 if (this.selectCount <= 0) {
@@ -508,7 +485,7 @@
                             ids += e.id + ",";
                         });
                         ids = ids.substring(0, ids.length - 1);
-                        removeOrganization(ids).then(res => {
+                        removeStore(ids).then(res => {
                             if (res.success === true) {
                                 this.$Message.success("删除成功");
                                 this.clearSelectAll();

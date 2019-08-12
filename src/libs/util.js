@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getMenuList } from '@/api/sys';
 import lazyLoading from './lazyLoading.js';
 import Cookies from "js-cookie";

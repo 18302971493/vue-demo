@@ -627,10 +627,11 @@
                 this.modalVisible=true;
             },
             edit(v){
-                this.$refs.form.resetFields();
-                this.form=v;
                 this.modalTitle='修改';
                 this.errorMsg=''
+                this.$refs.form.resetFields();
+                var str=JSON.stringify(v);
+                this.form=JSON.parse(str);
                 this.address={"proId":this.form.provinceId,"cityId":this.form.cityId,"countyId":this.form.countyId};
                 this.oldFullName=this.form.fullName;
                 this.oldName=this.form.name;

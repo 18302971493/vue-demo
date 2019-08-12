@@ -400,7 +400,8 @@ export default {
     test(){
       util.openNewPage(this, "test1");
       this.$router.push({
-        name: "test1"
+        name: "test1",
+        params:{"id":1}
       });
     },
     changeSort(e) {

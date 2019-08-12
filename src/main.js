@@ -16,7 +16,7 @@ import './styles/fonts/iconfont.css'
 import 'vue-awesome/icons/brands/weixin'
 import 'vue-awesome/icons/brands/weibo'
 import 'vue-awesome/icons/brands/github'
-import ajax from '@/libs/axios'
+import ajax from '@/libs/ajax'
 import { setStore, getStore, removeStore } from '@/libs/storage'
 import util from '@/libs/util';
 import VueStomp from "vue-stomp"

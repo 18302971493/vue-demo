@@ -127,7 +127,6 @@
         },
         methods: {
             init(){
-                console.log(this.value)
                 if (!common.isNull(this.value.proId)&&!common.isNull(this.value.cityId)&&!common.isNull(this.value.countyId)) {
                     this.cloneValue=this.value
                     this.findCityChildren();

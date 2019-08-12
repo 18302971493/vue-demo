@@ -1,7 +1,6 @@
-// 统一请求路径前缀在libs/axios.js中修改
-import ajax from '@/libs/axios';
+import ajax from '@/libs/ajax';
 import gbs from '../libs/constant';
-let Base64 = require('js-base64').Base64;
+
 let base="/sparrow"
 
 // 文件上传接口
@@ -77,7 +76,6 @@ export function ipInfo(params){
 }
 // 个人中心编辑
 export function userInfoEdit(params){
-
   return ajax({
     method: 'post',
     url: gbs.SERVICE.sys+'/users/edit',
