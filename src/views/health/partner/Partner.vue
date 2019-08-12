@@ -658,8 +658,6 @@
                 this.$refs.searchForm.resetFields();
                 this.searchForm.pageNo = 1;
                 this.searchForm.pageSize = 10;
-                this.selectDate = null;
-                this.selectDep = [];
                 // 重新加载数据
                 this.getList();
             },
