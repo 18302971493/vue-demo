@@ -12,7 +12,6 @@ import 'iview/dist/styles/iview.css'
 import Icon from 'vue-awesome/components/Icon'
 // 按需引入awesome图标
 import 'vue-awesome/icons/brands/qq'
-import './styles/fonts/iconfont.css'
 import 'vue-awesome/icons/brands/weixin'
 import 'vue-awesome/icons/brands/weibo'
 import 'vue-awesome/icons/brands/github'
