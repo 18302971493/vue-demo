@@ -134,3 +134,29 @@ export function removeStore(ids,params){
         params: params
     });
 }
+export const uploadFile =gbs.base+gbs.SERVICE.health+"/item/importItem"
+/**
+ * 查询门店列表
+ * @param params
+ */
+export function getItemList(params) {
+    return ajax({
+        method: 'get',
+        params: params,
+        url: gbs.SERVICE.health+"/item/list",
+    });
+}
+
+/**
+ * 下载文件
+ */
+export function downLoadFile() {
+    return ajax({
+        method: 'post',
+        url: gbs.SERVICE.health+"/item/download",
+        headers: {
+            "Content-Type": "application/octet-stream"
+        },
+        responseType:'blob'
+    });
+}

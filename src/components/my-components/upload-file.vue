@@ -44,6 +44,7 @@
 </template>
 <script>
     import { uploadFile } from "@/api/sys";
+    import gbs from '../../libs/constant'
     export default {
         name:'upload-file',
         props:{
@@ -83,9 +84,7 @@
         },
         methods: {
             init() {
-                this.accessToken = {
-                    accessToken: this.getStore("accessToken")
-                };
+                this.accessToken =gbs.accessToken;
             },
             handleView (url) {
                 this.imgUrl = url;

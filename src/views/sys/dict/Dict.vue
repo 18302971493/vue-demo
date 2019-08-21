@@ -398,9 +398,9 @@ export default {
       })
     },
     test(){
-      util.openNewPage(this, "test1");
+      util.openNewPage(this, "test");
       this.$router.push({
-        name: "test1",
+        path: "sys/dict/test",
         params:{"id":1}
       });
     },

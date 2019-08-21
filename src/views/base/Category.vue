@@ -230,7 +230,6 @@
           }
           if (valid) {
             this.submitLoading=true
-
             addCategory(this.form).then(res=>{
               if(res.success){
                 this.$Message.success('操作成功')
@@ -376,7 +375,6 @@
         console.log('排序规则:' + type)
       },
       initData(){
-        debugger
         getCategoryList(this.searchForm).then(res=>{
           if(res.success){
             this.dataList=res.result

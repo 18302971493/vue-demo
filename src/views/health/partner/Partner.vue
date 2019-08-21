@@ -47,7 +47,7 @@
                         </Form>
                     </Row>
                     <Row class="operation">
-                        <Button @click="add" type="primary" icon="md-add" v-has="'add'">添加</Button>
+                        <Button @click="add" type="primary" icon="md-add">添加</Button>
                         <Button @click="delAll" icon="md-trash">批量删除</Button>
                     </Row>
                     <Row>
@@ -180,6 +180,8 @@
     import common from "../../../libs/common";
     import areaSelect from "@/components/my-components/area-select";
     import uploadPicInput from "@/components/own-space/upload-pic-input";
+    import gbs from '../../../libs/constant'
+    import util from '../../../libs/util'
     export default {
         name: "Partner",
         components:{
@@ -496,9 +498,7 @@
                 this.getTagData();
                 this.getLevelData();
                 this.getCustomizeData();
-                this.accessToken = {
-                    accessToken: this.getStore("accessToken")
-                };
+                this.accessToken = gbs.accessToken;
             },
             handleFormatError(file) {
                 this.$Notice.warning({
@@ -618,13 +618,18 @@
                 this.$refs.table.selectAll(false);
             },
             add(){
-                this.errorMsg=''
-                this.$refs.form.resetFields();
-                this.oldFullName='';
-                this.oldName='';
-                this.oldCode='';
-                this.modalType=1;
-                this.modalVisible=true;
+                // this.errorMsg=''
+                // this.$refs.form.resetFields();
+                // this.oldFullName='';
+                // this.oldName='';
+                // this.oldCode='';
+                // this.modalType=1;
+                // this.modalVisible=true;
+                util.openNewPage(this, "addPartner");
+                this.$router.push({
+                    path: "/partner/add",
+                    params:{"id":1}
+                });
             },
             edit(v){
                 this.modalTitle='修改';

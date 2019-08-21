@@ -1,7 +1,7 @@
 import ajax from '@/libs/ajax';
 import gbs from '../libs/constant';
 
-let base="/sparrow"
+let base=gbs.base;
 
 // 文件上传接口
 export const uploadFile =base+gbs.SERVICE.file+"/upload/file"

@@ -53,7 +53,7 @@ export const otherRouter = {
         { path: 'ownspace', title:{ i18n: 'userCenter' }, name: 'ownspace', component: () => import('@/components/own-space/own-space.vue') },
         { path: 'change-pass', title: '修改密码', name: 'change_pass', component: () => import('@/components/change-pass/change-pass.vue') },
         { path: 'test', title: '富文本测试', name: 'test', component: () => import('@/views/sys/test/Test.vue') },
-        { path: 'test1', title: '测试', name: 'test1', component: () => import('@/views/sys/test/Test1.vue') },
+        { path: '/partner/partner/test', title: '测试', name: 'test1', component: () => import('@/views/sys/test/Test1.vue') },
     ]
 };
 export const appRouter = [];

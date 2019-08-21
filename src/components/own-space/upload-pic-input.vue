@@ -46,6 +46,7 @@
 
 <script>
   import { uploadFile } from "@/api/sys";
+  import gbs from '../../libs/constant'
   export default {
     name: "uploadPicInput",
     props: {
@@ -89,9 +90,7 @@
     },
     methods: {
       init() {
-        this.accessToken = {
-          accessToken: this.getStore("accessToken")
-        };
+        this.accessToken = gbs.accessToken;
       },
       handleFormatError(file) {
         this.loading = false;
