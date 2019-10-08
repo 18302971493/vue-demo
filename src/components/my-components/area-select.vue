@@ -134,7 +134,8 @@
                 }
             },
             initData(){
-                findAreaList(util.levelArr[1]).then(res=>{
+                findAreaList(util.levelArr[0]).then(res=>{
+                    console.log(res.result)
                     if(res.success){
                        this.provList=res.result;
                     }
@@ -163,6 +164,7 @@
             },
             changePro () {
                 this.cloneValue.cityId='';
+                console.log(this.cloneValue)
                 if(!common.isNull(this.cloneValue.proId)){
                     this.findCityChildren()
                 }

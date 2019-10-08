@@ -32,7 +32,7 @@
                         </Form>
                     </Row>
                     <Row class="operation">
-                        <Button @click="add" type="primary" icon="md-add" v-has="'add'">添加</Button>
+                        <Button @click="add" type="primary" icon="md-add">添加</Button>
                         <Button @click="delAll" icon="md-trash">批量删除</Button>
                     </Row>
                     <Row>

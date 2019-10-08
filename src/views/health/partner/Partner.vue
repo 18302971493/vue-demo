@@ -618,18 +618,13 @@
                 this.$refs.table.selectAll(false);
             },
             add(){
-                // this.errorMsg=''
-                // this.$refs.form.resetFields();
-                // this.oldFullName='';
-                // this.oldName='';
-                // this.oldCode='';
-                // this.modalType=1;
-                // this.modalVisible=true;
-                util.openNewPage(this, "addPartner");
-                this.$router.push({
-                    path: "/partner/add",
-                    params:{"id":1}
-                });
+                this.errorMsg=''
+                this.$refs.form.resetFields();
+                this.oldFullName='';
+                this.oldName='';
+                this.oldCode='';
+                this.modalType=1;
+                this.modalVisible=true;
             },
             edit(v){
                 this.modalTitle='修改';
